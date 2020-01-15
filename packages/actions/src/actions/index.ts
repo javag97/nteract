@@ -11,12 +11,12 @@ import {
   HostRecord,
   HostRef,
   KernelRef,
-  LanguageInfoMetadata,
-  PayloadMessage
+  LanguageInfoMetadata
 } from "@nteract/types";
 
 // Local modules
 import * as actionTypes from "../actionTypes";
+import { JupyterMessage } from "@nteract/messaging/src";
 
 export * from "./bookstore";
 export * from "./cells";
@@ -199,17 +199,13 @@ export function appendOutput(payload: {
   };
 }
 
-export function acceptPayloadMessage(payload: {
-  id: CellId;
-  // TODO: Properly type acceptPayloadMessage as taking jupyter payload message
-  // Not to be confused with a redux style action payload
-  payload: PayloadMessage;
-  contentRef: ContentRef;
-}): actionTypes.AcceptPayloadMessage {
-  return {
-    type: actionTypes.ACCEPT_PAYLOAD_MESSAGE,
-    payload
-  };
+export function acceptPayloadMessage(
+   payload: JupyterMessage
+): actionTypes.AcceptPayloadMessage {
+   return {
+     type: actionTypes.ACCEPT_PAYLOAD_MESSAGE,
+     payload
+   };
 }
 
 export function updateDisplay(payload: {

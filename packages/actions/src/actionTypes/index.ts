@@ -15,6 +15,7 @@ import {
 import { HostRecord } from "@nteract/types";
 import { LanguageInfoMetadata } from "@nteract/types";
 import { System as NotificationSystem } from "react-notification-system";
+import { JupyterMessage } from "@nteract/messaging/src";
 
 export * from "./bookstore";
 export * from "./cells";
@@ -111,11 +112,7 @@ export interface UpdateDisplayFailed {
 export const ACCEPT_PAYLOAD_MESSAGE = "ACCEPT_PAYLOAD_MESSAGE";
 export interface AcceptPayloadMessage {
   type: "ACCEPT_PAYLOAD_MESSAGE";
-  payload: {
-    id: CellId;
-    payload: PayloadMessage;
-    contentRef: ContentRef;
-  };
+  payload: JupyterMessage;
 }
 
 export const SET_LANGUAGE_INFO = "SET_LANGUAGE_INFO";
