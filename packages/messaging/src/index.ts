@@ -1,4 +1,3 @@
-import { PayloadMessage } from "@nteract/types";
 import { from, Observable, Subscriber } from "rxjs";
 import { filter, map, mergeMap } from "rxjs/operators";
 import { executeRequest, message } from "./messages";
@@ -233,12 +232,12 @@ export const updatedOutputs = () => (source: Observable<JupyterMessage>) =>
  */
 export const payloads = () => (
   source: Observable<JupyterMessage>
-): Observable<PayloadMessage> =>
+): Observable<JupyterMessage> =>
   source.pipe(
     ofMessageType("execute_reply"),
     map(entry => entry.content.payload),
     filter(p => !!p),
-    mergeMap((p: Observable<PayloadMessage>) => from(p))
+    mergeMap((p: Observable<JupyterMessage>) => from(p))
   );
 
 /**

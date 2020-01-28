@@ -1012,10 +1012,23 @@ describe("acceptPayloadMessage", () => {
       initialState,
       actions.acceptPayloadMessage({
         id: firstCellId,
+        contentRef: undefined,    
         payload: {
-          source: "page",
-          data: { well: "alright" }
-        }
+              header: {
+                msg_id: "12",
+                username: "test",
+                date: "2020-01-28", 
+                msg_type: "page",
+                version: "1.0.0", // this could be an enum
+                session: "current"
+              },
+              parent_header: {},
+              channel: "chan",
+              metadata: {},
+              content: { 
+                well: "alright" 
+              }
+            },
       })
     );
 
@@ -1027,17 +1040,30 @@ describe("acceptPayloadMessage", () => {
       state,
       actions.acceptPayloadMessage({
         id: firstCellId,
+        contentRef: undefined,
         payload: {
-          source: "set_next_input",
-          replace: true,
-          text: "this is now the text"
+          header: {
+            msg_id: "12",
+            username: "test",
+            date: "2020-01-28", 
+            msg_type: "set_next_input",
+            version: "1.0.0", // this could be an enum
+            session: "current"
+          },
+          parent_header: {},
+          channel: "chan",
+          metadata: {},
+          content: { 
+            text: "this is now the test",
+            replace: "true"
+          }
         }
       })
     );
 
     expect(
       nextState.getIn(["notebook", "cellMap", firstCellId, "source"])
-    ).toEqual("this is now the text");
+    ).toEqual("this is now the test");
   });
 });
 

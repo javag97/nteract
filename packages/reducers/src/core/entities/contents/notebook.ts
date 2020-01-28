@@ -25,17 +25,17 @@ import {
   OnDiskOutput,
   OnDiskStreamOutput
 } from "@nteract/commutable";
-import { UpdateDisplayDataContent } from "@nteract/messaging";
+import { UpdateDisplayDataContent, JupyterMessage } from "@nteract/messaging";
 import {
   DocumentRecordProps,
   makeDocumentRecord,
-  NotebookModel,
-  PayloadMessage
+  NotebookModel
 } from "@nteract/types";
 import { escapeCarriageReturnSafe } from "escape-carriage";
 import { fromJS, List, Map, RecordOf, Set } from "immutable";
 import has from "lodash.has";
 import uuid from "uuid/v4";
+
 
 type KeyPath = List<string | number>;
 type KeyPaths = List<KeyPath>;
@@ -552,18 +552,19 @@ function acceptPayloadMessage(
   action: actionTypes.AcceptPayloadMessage
 ): NotebookModel {
   const id: string = action.payload.id;
-  const payload: PayloadMessage = action.payload.payload;
+  const payload: JupyterMessage = action.payload.payload;
+  console.dir(payload)
 
-  if (payload.source === "page") {
+  if (payload.header.msg_type === "page") {
     // append pager
     return state.updateIn(["cellPagers", id], l =>
-      (l || List()).push(payload.data)
+      (l || List()).push(payload.content)
     );
-  } else if (payload.source === "set_next_input") {
-    if (payload.replace) {
+  } else if (payload.header.msg_type === "set_next_input") {
+    if (payload.content.replace) { //payload replace
       // this payload is sent in IPython when you use %load
       // and is intended to replace cell source
-      return state.setIn(["notebook", "cellMap", id, "source"], payload.text);
+      return state.setIn(["notebook", "cellMap", id, "source"], payload.content.text);
     } else {
       // create the next cell
       // FIXME: This is a weird pattern. We're basically faking a dispatch here
@@ -574,7 +575,7 @@ function acceptPayloadMessage(
         payload: {
           cellType: "code",
           // TODO: is payload.text guaranteed to be defined?
-          source: payload.text || "",
+          source: payload.content.text || "",
           id,
           contentRef: action.payload.contentRef
         }
